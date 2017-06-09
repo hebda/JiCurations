@@ -1,6 +1,8 @@
 from flask import render_template, request
 from app import app
 import pymysql as mdb
+import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.pyplot as plt
 import math
 import os
