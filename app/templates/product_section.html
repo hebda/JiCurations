@@ -191,6 +191,9 @@
                   </div>
 		  {% endif %}
 		  {% endfor %}
+		  {% if payload['products']|length%3!=0: %}
+                  </div>
+                  {% endif %}
                   <!-- /.product-slider -->
 
                 </div>
