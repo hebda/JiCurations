@@ -175,11 +175,11 @@
 		  {% endif %}
                         <div class="col-sm-4">
                             <div class="product">
-                                            <a href="/coming_soon">
-                                                <img src="static/img/YB17001RB_1.jpg" alt="" class="img-responsive" style="height: 100%; width: 100%; object-fit: contain">
+                                            <a href={{"/yoga_product?idd="+product_i.code}}>
+                                                <img src={{"static/img/"+product_i.code+"_main.jpg"}} alt="" class="img-responsive" style="height: 100%; width: 100%; object-fit: contain">
                                             </a>
                                 <div class="text">
-                                    <h3><a href="/coming_soon">{{product_i.title}}</a></h3>
+                                    <h3><a href={{"/yoga_product?idd="+product_i.code}}>{{product_i.title}}</a></h3>
                                 </div>
                                 <!-- /.text -->
 

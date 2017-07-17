@@ -6,6 +6,7 @@ mpl.use('Agg')
 import matplotlib.pyplot as plt
 import math
 import os
+import fnmatch
 import collections
 from datetime import datetime
 
@@ -35,9 +36,12 @@ def home():
 def coming_soon():
     return render_template('coming_soon.html',is_subscribed=is_subscribed)
 
+@app.route('/yoga_product')
 @app.route('/yoga_mat_bags')
 def yoga_mat_bags():
+    input_code=request.args.get('idd')
     products=[]
+    product_i=None
     with open('app/data/yoga_mat_bags.csv') as filehandle:
         all_lines=''.join(filehandle.readlines())+'\n'
         for line in all_lines.split(',la fin\n')[1:-1]:
@@ -47,6 +51,8 @@ def yoga_mat_bags():
             price=int(line.split(',')[-2])
             imagecode=line.split(',')[-1].replace('\n','')
             products.append(product(code,title,desc,price,imagecode))
+            if input_code!=None:
+                product_i=product(code,title,desc,price,imagecode)
     payload_dict={'products':products,'banner':'img.jpg','desc':'description'}
     with open('app/data/section_header.csv') as filehandle:
         for line in filehandle:
@@ -54,7 +60,11 @@ def yoga_mat_bags():
                 payload_dict['banner']=line.split(',')[1]
                 payload_dict['desc']=','.join(line.split(',')[2:]).replace('"','')
                 break
-    return render_template('product_section.html',is_subscribed=is_subscribed,payload=payload_dict)
+    if input_code==None:
+        return render_template('product_section.html',is_subscribed=is_subscribed,payload=payload_dict)
+    else:
+        num_img=len(fnmatch.filter(os.listdir("app/static/img"), '%s*'%input_code))
+        return render_template('product.html',is_subscribed=is_subscribed,product_i=product_i,num_img=num_img)
 
 @app.route('/subscribe')
 def subscribe():
