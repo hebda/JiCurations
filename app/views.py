@@ -9,6 +9,7 @@ import os
 import fnmatch
 import collections
 from datetime import datetime
+from sys import version_info
 
 # for determining if email input box is needed
 is_subscribed=0
@@ -44,10 +45,12 @@ def yoga_mat_bags():
     product_i=None
     with open('app/data/yoga_mat_bags.csv') as filehandle:
         all_lines=''.join(filehandle.readlines())+'\n'
-        for line in all_lines.split(',la fin\n')[1:-1]:
-            code=line.split(',')[0]
+        for line in all_lines.split(',la fin')[1:-1]:
+            code=line.split(',')[0].replace('\n','').replace('\r','')
             title=line.split(',')[1].replace('"','')
             desc=','.join([str(i) for i in line.split(',')[2:len(line.split(','))-2]]).replace('"','')
+            if version_info.major<3:
+                desc=desc.decode('utf-8')
             price=int(line.split(',')[-2])
             imagecode=line.split(',')[-1].replace('\n','')
             products.append(product(code,title,desc,price,imagecode))
