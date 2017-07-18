@@ -51,7 +51,7 @@ def yoga_mat_bags():
             price=int(line.split(',')[-2])
             imagecode=line.split(',')[-1].replace('\n','')
             products.append(product(code,title,desc,price,imagecode))
-            if input_code!=None:
+            if input_code==code:
                 product_i=product(code,title,desc,price,imagecode)
     payload_dict={'products':products,'banner':'img.jpg','desc':'description'}
     with open('app/data/section_header.csv') as filehandle:
