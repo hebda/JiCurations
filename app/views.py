@@ -16,10 +16,11 @@ is_subscribed=0
 
 #consider using a utils file
 class product:
-    def __init__(self,code,title,desc,price,imagecode):
+    def __init__(self,code,title,desc,features,price,imagecode):
         self.code=code
         self.title=title
         self.desc=desc
+        self.features=features
         self.price=price
         self.imagecode=imagecode
 
@@ -48,14 +49,18 @@ def yoga_mat_bags():
         for line in all_lines.split(',la fin')[1:-1]:
             code=line.split(',')[0].replace('\n','').replace('\r','')
             title=line.split(',')[1].replace('"','')
-            desc=','.join([str(i) for i in line.split(',')[2:len(line.split(','))-2]]).replace('"','')
+            desc=','.join([str(i) for i in line.split(',')[2:len(line.split(','))-3]]).replace('"','')
             if version_info.major<3:
                 desc=desc.decode('utf-8')
+            features=line.split(',')[-3].replace('"','').replace('\n','</li><li>').replace(':</li>',':<ul align="left" style="margin-top: -18px;">')+'</ul>'
+            if version_info.major<3:
+                features=features.decode('utf-8')
             price=int(line.split(',')[-2])
             imagecode=line.split(',')[-1].replace('\n','')
-            products.append(product(code,title,desc,price,imagecode))
+            products.append(product(code,title,desc,features,price,imagecode))
             if input_code==code:
-                product_i=product(code,title,desc,price,imagecode)
+                product_i=product(code,title,desc,features,price,imagecode)
+                print(desc,"hi!!!",features)
     payload_dict={'products':products,'banner':'img.jpg','desc':'description'}
     with open('app/data/section_header.csv') as filehandle:
         for line in filehandle:

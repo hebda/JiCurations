@@ -92,7 +92,7 @@
                             <li>
                                     <div class="row">
                                         <div class="col-sm-2">
-                                            <ul>
+                                            <ul style="display: inline-block; width:150px;">
                                                 <li><a href="/coming_soon">Clothing</a>
                                                 </li>
                                                 <li><a href="/yoga_mat_bags">Yoga mat bags</a>
@@ -179,10 +179,11 @@
                                                 <img src={{"static/img/"+product_i.code+"_main.jpg"}} alt="" class="img-responsive" style="height: 100%; width: 100%; object-fit: contain">
                                             </a>
                                 <div class="text">
-                                    <h3><a href={{"/yoga_product?idd="+product_i.code}}>{{product_i.title}}</a></h3>
+                                    <h3><a href={{"/yoga_product?idd="+product_i.code}}>{{product_i.title}}
+					<br>&#8377 {{product_i.price}}
+				    </a></h3>
                                 </div>
                                 <!-- /.text -->
-
                             </div>
                             <!-- /.product -->
                         </div>

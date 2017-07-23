@@ -92,7 +92,7 @@
                             <li>
                                     <div class="row">
                                         <div class="col-sm-2">
-                                            <ul>
+                                            <ul style="display: inline-block; width:150px;">
                                                 <li><a href="/coming_soon">Clothing</a>
                                                 </li>
                                                 <li><a href="/yoga_mat_bags">Yoga mat bags</a>
@@ -173,6 +173,8 @@
 			  &#8377 {{product_i.price}}
 			  <br><br>
 			  <span style="white-space: pre-line">{{product_i.desc}}</span>
+			  <br><br>
+			  <span style="white-space: pre-line; text-align: left">{{product_i.features|safe}}</span>
 			</p>
                         <span class="input-group-btn">
 			  <a href="/coming_soon" class="btn btn-primary navbar-btn"><i class="fa fa-shopping-cart"></i><span class="hidden-sm">Add to cart</span></a>
