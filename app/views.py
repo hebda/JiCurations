@@ -60,7 +60,6 @@ def yoga_mat_bags():
             products.append(product(code,title,desc,features,price,imagecode))
             if input_code==code:
                 product_i=product(code,title,desc,features,price,imagecode)
-                print(desc,"hi!!!",features)
     payload_dict={'products':products,'banner':'img.jpg','desc':'description'}
     with open('app/data/section_header.csv') as filehandle:
         for line in filehandle:
