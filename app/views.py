@@ -105,10 +105,20 @@ def basket():
             items_in_cart[input_code]=1
         num_items_in_cart+=1
         cart_total+=products[input_code].price
-    tax_total=int(cart_total*0.17)
+    tax_total=int(cart_total*0.0)
     shipping_total=50 if cart_total<1000 and cart_total>0 else 0
     order_total=cart_total+tax_total+shipping_total
     return render_template('basket.html',is_subscribed=is_subscribed,num_items_in_cart=num_items_in_cart,items_in_cart=items_in_cart,products=products,cart_total=cart_total,tax_total=tax_total,shipping_total=shipping_total,order_total=order_total)
+
+@app.route('/checkout')
+def checkout():
+    global num_items_in_cart
+    global cart_total
+    global order_total
+    tax_total=int(cart_total*0.0)
+    shipping_total=50 if cart_total<1000 and cart_total>0 else 0
+    order_total=cart_total+tax_total+shipping_total
+    return render_template('checkout1.html',is_subscribed=is_subscribed,num_items_in_cart=num_items_in_cart,items_in_cart=items_in_cart,products=products,cart_total=cart_total,tax_total=tax_total,shipping_total=shipping_total,order_total=order_total)
 
 @app.route('/product')
 def display_product():
