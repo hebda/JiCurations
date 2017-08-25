@@ -114,7 +114,11 @@
             <div class="navbar-buttons">
 
                 <div class="navbar-collapse collapse right" id="basket-overview">
-                    <a href="/basket" class="btn btn-primary navbar-btn"><i class="fa fa-shopping-cart"></i><span class="hidden-sm">{{num_items_in_cart}} items in cart</span></a>
+		  {% if num_items_in_cart!=1: %}
+		  <a href="/basket" class="btn btn-primary navbar-btn"><i class="fa fa-shopping-cart"></i><span class="hidden-sm">{{num_items_in_cart}} items in cart</span></a>
+		  {% else: %}
+		  <a href="/basket" class="btn btn-primary navbar-btn"><i class="fa fa-shopping-cart"></i><span class="hidden-sm">1 item in cart</span></a>
+		  {% endif %}
                 </div>
                 <!--/.nav-collapse -->
 

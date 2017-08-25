@@ -17,6 +17,8 @@ is_subscribed=0
 # for tracking number of items and list of items in cart
 num_items_in_cart=0
 items_in_cart={}
+cart_total=0
+order_total=0
 
 # consider using a utils file
 class product:
@@ -69,16 +71,44 @@ def home():
 def coming_soon():
     return render_template('coming_soon.html',is_subscribed=is_subscribed,num_items_in_cart=num_items_in_cart)
 
+@app.route('/update_basket')
+def update_basket():
+    global num_items_in_cart
+    global cart_total
+    input_code=request.args.get('id_zero')
+    if input_code!=None:
+        if input_code in items_in_cart:
+            del items_in_cart[input_code]
+    for arg_i in request.args:
+        if 'value_' not in arg_i:
+            continue
+        val_i=int(request.args.get(arg_i))
+        if val_i<0:
+            continue
+        if arg_i[6:] in products:
+            items_in_cart[arg_i[6:]]=val_i
+        
+    num_items_in_cart=sum(items_in_cart.values())
+    cart_total=sum([items_in_cart[i]*products[i].price for i in items_in_cart])
+    return basket()
+
 @app.route('/basket')
 def basket():
+    global num_items_in_cart
+    global cart_total
+    global order_total
     input_code=request.args.get('idd')
     if input_code!=None:
         if input_code in items_in_cart:
             items_in_cart[input_code]+=1
         else:
             items_in_cart[input_code]=1
-        num_items_in_cart=sum(items_in_cart.values())
-    return render_template('basket.html',is_subscribed=is_subscribed,num_items_in_cart=num_items_in_cart,items_in_cart=items_in_cart,products=products)
+        num_items_in_cart+=1
+        cart_total+=products[input_code].price
+    tax_total=int(cart_total*0.17)
+    shipping_total=50 if cart_total<1000 and cart_total>0 else 0
+    order_total=cart_total+tax_total+shipping_total
+    return render_template('basket.html',is_subscribed=is_subscribed,num_items_in_cart=num_items_in_cart,items_in_cart=items_in_cart,products=products,cart_total=cart_total,tax_total=tax_total,shipping_total=shipping_total,order_total=order_total)
 
 @app.route('/product')
 def display_product():

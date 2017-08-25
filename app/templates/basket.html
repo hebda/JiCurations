@@ -59,13 +59,13 @@
 
                     <div class="box">
 
-                        <form method="post" action="checkout1.html">
+                        <form method="get" action="/update_basket">
 
                             <h1>Shopping cart</h1>
-			    {% if num_items_in_cart==1: %}
-                            <p class="text-muted">You currently have 1 item in your cart.</p>
-			    {% else: %}
+			    {% if num_items_in_cart!=1: %}
                             <p class="text-muted">You currently have {{num_items_in_cart}} items in your cart.</p>
+			    {% else: %}
+                            <p class="text-muted">You currently have 1 item in your cart.</p>
 			    {% endif %}
                             <div class="table-responsive">
                                 <table class="table">
@@ -74,50 +74,32 @@
                                             <th colspan="2">Product</th>
                                             <th>Quantity</th>
                                             <th>Unit price</th>
-                                            <th>Discount</th>
-                                            <th colspan="2">Total</th>
+                                            <th colspan="2">Subtotal</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>
-                                                <a href="#">
-                                                    <img src="static/img/detailsquare.jpg" alt="White Blouse Armani">
-                                                </a>
-                                            </td>
-                                            <td><a href="#">White Blouse Armani</a>
-                                            </td>
-                                            <td>
-                                                <input type="number" value="2" class="form-control">
-                                            </td>
-                                            <td>$123.00</td>
-                                            <td>$0.00</td>
-                                            <td>$246.00</td>
-                                            <td><a href="#"><i class="fa fa-trash-o"></i></a>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <a href="#">
-                                                    <img src="static/img/basketsquare.jpg" alt="Black Blouse Armani">
-                                                </a>
-                                            </td>
-                                            <td><a href="#">Black Blouse Armani</a>
-                                            </td>
-                                            <td>
-                                                <input type="number" value="1" class="form-control">
-                                            </td>
-                                            <td>$200.00</td>
-                                            <td>$0.00</td>
-                                            <td>$200.00</td>
-                                            <td><a href="#"><i class="fa fa-trash-o"></i></a>
-                                            </td>
-                                        </tr>
+				      {% for item_i in items_in_cart: %}
+                                      <tr>
+					<td>
+                                          <a href={{"/product?idd="+item_i}}><img src={{"static/img/"+item_i+"_main.jpg"}} alt={{products[item_i].title}}>
+					  </a>
+                                        </td>
+                                        <td><a href={{"/product?idd="+item_i}}>{{products[item_i].title}}</a>
+                                        </td>
+                                        <td>
+                                          <input type="number" value={{items_in_cart[item_i]}} class="form-control" id={{"value_"+item_i}} name={{"value_"+item_i}}>
+                                        </td>
+                                        <td>&#8377 {{products[item_i].price}}</td>
+                                        <td>&#8377 {{products[item_i].price*items_in_cart[item_i]}}</td>
+                                        <td><a href={{"/update_basket?id_zero="+item_i}}><i class="fa fa-trash-o"></i></a>
+                                        </td>
+                                      </tr>
+				      {% endfor %}
                                     </tbody>
                                     <tfoot>
                                         <tr>
-                                            <th colspan="5">Total</th>
-                                            <th colspan="2">$446.00</th>
+                                            <th colspan="4">All items</th>
+                                            <th colspan="2">&#8377 {{cart_total}}</th>
                                         </tr>
                                     </tfoot>
                                 </table>
@@ -131,8 +113,7 @@
                                 </div>
                                 <div class="pull-right">
                                     <button class="btn btn-default"><i class="fa fa-refresh"></i> Update basket</button>
-                                    <button type="submit" class="btn btn-primary">Proceed to checkout <i class="fa fa-chevron-right"></i>
-                                    </button>
+                                    <a href="/coming_soon" class="btn btn-primary" type="submit"><i class="fa fa-chevron-right"></i> Proceed to checkout</a>
                                 </div>
                             </div>
 
@@ -150,86 +131,43 @@
                         </div>
 
                         <div class="col-md-3 col-sm-6">
-                            <div class="product same-height">
-                                <div class="flip-container">
-                                    <div class="flipper">
-                                        <div class="front">
-                                            <a href="detail.html">
-                                                <img src="static/img/product2.jpg" alt="" class="img-responsive">
-                                            </a>
-                                        </div>
-                                        <div class="back">
-                                            <a href="detail.html">
-                                                <img src="static/img/product2_2.jpg" alt="" class="img-responsive">
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <a href="detail.html" class="invisible">
-                                    <img src="static/img/product2.jpg" alt="" class="img-responsive">
-                                </a>
-                                <div class="text">
-                                    <h3>Fur coat</h3>
-                                    <p class="price">$143</p>
-                                </div>
+			  <div class="product">
+                            <a href="/coming_soon">
+                              <img src="static/img/Clothing.jpg" alt="" class="img-responsive" style="height: 100%; width: 100%; object-fit: contain">
+                            </a>
+                            <div class="text">
+                              <h3><a href="/coming_soon">Clothing</a></h3>
                             </div>
-                            <!-- /.product -->
+                            <!-- /.text -->
+                          </div>
                         </div>
 
                         <div class="col-md-3 col-sm-6">
-                            <div class="product same-height">
-                                <div class="flip-container">
-                                    <div class="flipper">
-                                        <div class="front">
-                                            <a href="detail.html">
-                                                <img src="static/img/product1.jpg" alt="" class="img-responsive">
-                                            </a>
-                                        </div>
-                                        <div class="back">
-                                            <a href="detail.html">
-                                                <img src="static/img/product1_2.jpg" alt="" class="img-responsive">
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <a href="detail.html" class="invisible">
-                                    <img src="static/img/product1.jpg" alt="" class="img-responsive">
-                                </a>
-                                <div class="text">
-                                    <h3>Fur coat</h3>
-                                    <p class="price">$143</p>
-                                </div>
+                          <div class="product">
+                            <a href="/product_section?idd=yoga_mat_bags">
+                              <img src="static/img/Yogamat bags.jpg" alt="" class="img-responsive" style="height: 100%; width: 100%; object-fit: contain">
+                            </a>
+                            <div class="text">
+                              <h3><a href="/product_section?idd=yoga_mat_bags">Yoga mat bags</a></h3>
                             </div>
-                            <!-- /.product -->
+                            <!-- /.text -->
+			    
+                          </div>
+                          <!-- /.product -->
                         </div>
-
-
+			
                         <div class="col-md-3 col-sm-6">
-                            <div class="product same-height">
-                                <div class="flip-container">
-                                    <div class="flipper">
-                                        <div class="front">
-                                            <a href="detail.html">
-                                                <img src="static/img/product3.jpg" alt="" class="img-responsive">
-                                            </a>
-                                        </div>
-                                        <div class="back">
-                                            <a href="detail.html">
-                                                <img src="static/img/product3_2.jpg" alt="" class="img-responsive">
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <a href="detail.html" class="invisible">
-                                    <img src="static/img/product3.jpg" alt="" class="img-responsive">
-                                </a>
-                                <div class="text">
-                                    <h3>Fur coat</h3>
-                                    <p class="price">$143</p>
-
-                                </div>
+                          <div class="product">
+                            <a href="/coming_soon">
+                              <img src="static/img/Home needs.jpg" alt="" class="img-responsive" style="height: 100%; width: 100%; object-fit: contain">
+                            </a>
+                            <div class="text">
+                              <h3><a href="/coming_soon">Home needs</a></h3>
                             </div>
-                            <!-- /.product -->
+                            <!-- /.text -->
+			    
+                          </div>
+                          <!-- /.product -->
                         </div>
 
                     </div>
@@ -243,26 +181,26 @@
                         <div class="box-header">
                             <h3>Order summary</h3>
                         </div>
-                        <p class="text-muted">Shipping and additional costs are calculated based on the values you have entered.</p>
+                        <p class="text-muted">Shipping and tax are based on the order subtotal.</p>
 
                         <div class="table-responsive">
                             <table class="table">
                                 <tbody>
                                     <tr>
                                         <td>Order subtotal</td>
-                                        <th>$446.00</th>
+                                        <th>&#8377 {{cart_total}}</th>
                                     </tr>
                                     <tr>
-                                        <td>Shipping and handling</td>
-                                        <th>$10.00</th>
+                                        <td>Shipping</td>
+                                        <th>&#8377 {{shipping_total}}</th>
                                     </tr>
                                     <tr>
-                                        <td>Tax</td>
-                                        <th>$0.00</th>
+                                        <td>Tax (17%)</td>
+                                        <th>&#8377 {{tax_total}}</th>
                                     </tr>
                                     <tr class="total">
                                         <td>Total</td>
-                                        <th>$456.00</th>
+                                        <th>&#8377 {{order_total}}</th>
                                     </tr>
                                 </tbody>
                             </table>
