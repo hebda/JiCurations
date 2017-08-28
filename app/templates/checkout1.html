@@ -58,7 +58,7 @@
                 <div class="col-md-9" id="checkout">
 
                     <div class="box">
-                        <form method="post" action="checkout2.html">
+                        <form method="POST" action="/payment">
                             <h1>Checkout</h1>
                             <ul class="nav nav-pills nav-justified">
                                 <li class="active"><a href="#"><i class="fa fa-map-marker"></i><br>Address</a>
@@ -75,14 +75,14 @@
                                 <div class="row">
                                     <div class="col-sm-6">
                                         <div class="form-group">
-                                            <label for="firstname">Firstname</label>
-                                            <input type="text" class="form-control" id="firstname">
+                                            <label for="firstname">First name</label>
+                                            <input type="text" class="form-control" name="firstname">
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
                                         <div class="form-group">
-                                            <label for="lastname">Lastname</label>
-                                            <input type="text" class="form-control" id="lastname">
+                                            <label for="lastname">Last name</label>
+                                            <input type="text" class="form-control" name="lastname">
                                         </div>
                                     </div>
                                 </div>
@@ -92,13 +92,13 @@
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label for="address1">Address 1</label>
-                                            <input type="text" class="form-control" id="address1">
+                                            <input type="text" class="form-control" name="address1">
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label for="address2">Address 2</label>
-                                            <input type="text" class="form-control" id="address2">
+                                            <input type="text" class="form-control" name="address2">
                                         </div>
                                     </div>
                                 </div>
@@ -108,38 +108,38 @@
                                     <div class="col-sm-6 col-md-3">
                                         <div class="form-group">
                                             <label for="city">City</label>
-                                            <input type="text" class="form-control" id="city">
+                                            <input type="text" class="form-control" name="city">
                                         </div>
                                     </div>
                                     <div class="col-sm-6 col-md-3">
                                         <div class="form-group">
                                             <label for="state">State</label>
-                                            <input type="text" class="form-control" id="state">
+                                            <input type="text" class="form-control" name="state">
                                         </div>
                                     </div>
                                     <div class="col-sm-6 col-md-3">
                                         <div class="form-group">
                                             <label for="zip">ZIP</label>
-                                            <input type="text" class="form-control" id="zip">
+                                            <input type="text" class="form-control" name="zip">
                                         </div>
                                     </div>
                                     <div class="col-sm-6 col-md-3">
                                         <div class="form-group">
                                             <label for="country">Country</label>
-                                            <input type="text" class="form-control" id="country" value="India" readonly>
+                                            <input type="text" class="form-control" name="country" value="India" readonly>
                                         </div>
                                     </div>
 
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label for="phone">Telephone</label>
-                                            <input type="text" class="form-control" id="phone">
+                                            <input type="text" class="form-control" name="phone">
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label for="email">Email</label>
-                                            <input type="text" class="form-control" id="email">
+                                            <input type="text" class="form-control" name="email">
                                         </div>
                                     </div>
 
