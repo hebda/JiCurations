@@ -3,3 +3,4 @@ app/__pycache__/
 *~
 .DS_Store
 supervisord.pid
+key_and_salt.txt
