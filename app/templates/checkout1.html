@@ -68,7 +68,7 @@
                 <div class="col-md-9" id="checkout">
 
                     <div class="box">
-		      <form action={{ action }} method="post" name="payuForm">
+		      <form action="/checkout?id=verify" method="post" name="payuForm">
 			<input type="hidden" name="key" value="{{ posted.key }}" />
 			<input type="hidden" name="hash_string" value="{{ hash_string }}" />
 			<input type="hidden" name="hash" value="{{ hashh }}"/>
@@ -169,7 +169,8 @@
                                     <a href="/basket" class="btn btn-default"><i class="fa fa-chevron-left"></i>Back to basket</a>
                                 </div>
                                 <div class="pull-right">
-                                    <a href="/checkout?id=verify" class="btn btn-default"><i class="fa fa-chevron-right"></i>Verify</a>
+                                    <button type="submit" class="btn btn-primary">Verify<i class="fa fa-chevron-right"></i>
+                                    <!--<a href="/checkout?id=verify" class="btn btn-default"><i class="fa fa-chevron-right"></i>Verify</a>
                                     </button>
                                 </div>
                             </div>

@@ -124,7 +124,7 @@ def basket():
     order_total=cart_total+tax_total+shipping_total
     return render_template('basket.html',is_subscribed=is_subscribed,num_items_in_cart=num_items_in_cart,items_in_cart=items_in_cart,products=products,cart_total=cart_total,tax_total=tax_total,shipping_total=shipping_total,order_total=order_total)
 
-@app.route('/checkout')
+@app.route('/checkout', methods=['GET', 'POST'])
 def checkout():
     is_testing=1
     global num_items_in_cart
@@ -164,7 +164,6 @@ def checkout():
     posted['firstname']=''
     posted['email']='' if not is_testing else 'email'
     hash_string=''
-    print(request.args)
     for i in request.form:
         posted[i]=request.form[i]
     hashVarsSeq=hashSequence.split('|')
