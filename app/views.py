@@ -10,6 +10,9 @@ import fnmatch
 import collections
 from datetime import datetime
 from sys import version_info
+import hashlib
+from random import randint
+from django.template import RequestContext
 
 # for determining if email input box is needed
 is_subscribed=0
@@ -61,6 +64,13 @@ font = {'family' : 'sans-serif', 'weight' : 'bold', 'size'   : 22}
 plt.rc('font', **font)
 #plt.rcParams['text.latex.preamble'] = [r'\usepackage{sfmath} \boldmath']
 
+def calc_tax(subtotal=0):
+    tax_rate=0.0
+    return int(subtotal*tax_rate)
+
+def calc_shipping(subtotal=0):
+    return 50 if subtotal>0 and subtotal<1000 else 0
+
 @app.route('/')
 @app.route('/index')
 @app.route('/input')
@@ -74,7 +84,9 @@ def coming_soon():
 @app.route('/update_basket')
 def update_basket():
     global num_items_in_cart
+    global items_in_cart
     global cart_total
+    global order_total
     input_code=request.args.get('id_zero')
     if input_code!=None:
         if input_code in items_in_cart:
@@ -83,10 +95,11 @@ def update_basket():
         if 'value_' not in arg_i:
             continue
         val_i=int(request.args.get(arg_i))
-        if val_i<0:
-            continue
         if arg_i[6:] in products:
-            items_in_cart[arg_i[6:]]=val_i
+            if val_i<=0:
+                del items_in_cart[arg_i[6:]]
+            else:
+                items_in_cart[arg_i[6:]]=val_i
         
     num_items_in_cart=sum(items_in_cart.values())
     cart_total=sum([items_in_cart[i]*products[i].price for i in items_in_cart])
@@ -95,6 +108,7 @@ def update_basket():
 @app.route('/basket')
 def basket():
     global num_items_in_cart
+    global items_in_cart
     global cart_total
     global order_total
     input_code=request.args.get('idd')
@@ -105,20 +119,73 @@ def basket():
             items_in_cart[input_code]=1
         num_items_in_cart+=1
         cart_total+=products[input_code].price
-    tax_total=int(cart_total*0.0)
-    shipping_total=50 if cart_total<1000 and cart_total>0 else 0
+    tax_total=calc_tax(cart_total)
+    shipping_total=calc_shipping(cart_total)
     order_total=cart_total+tax_total+shipping_total
     return render_template('basket.html',is_subscribed=is_subscribed,num_items_in_cart=num_items_in_cart,items_in_cart=items_in_cart,products=products,cart_total=cart_total,tax_total=tax_total,shipping_total=shipping_total,order_total=order_total)
 
 @app.route('/checkout')
 def checkout():
+    is_testing=1
     global num_items_in_cart
+    global items_in_cart
     global cart_total
     global order_total
-    tax_total=int(cart_total*0.0)
-    shipping_total=50 if cart_total<1000 and cart_total>0 else 0
+    tax_total=calc_tax(cart_total)
+    shipping_total=calc_shipping(cart_total)
     order_total=cart_total+tax_total+shipping_total
-    return render_template('checkout1.html',is_subscribed=is_subscribed,num_items_in_cart=num_items_in_cart,items_in_cart=items_in_cart,products=products,cart_total=cart_total,tax_total=tax_total,shipping_total=shipping_total,order_total=order_total)
+
+    MERCHANT_KEY = ""
+    SALT = ""
+    with open('app/data/key_and_salt%s.txt' % ('_test' if is_testing else '') ) as filehandle:
+        for line_num,line in enumerate(filehandle):
+            if line_num==0:
+                MERCHANT_KEY=line.replace('\n','')
+            elif line_num==1:
+                SALT=line.replace('\n','')
+            if line_num>=2:
+                break
+    PAYU_BASE_URL = "https://secure.payu.in/_payment"
+    if is_testing:
+        PAYU_BASE_URL = "https://test.payu.in/_payment"
+    action=PAYU_BASE_URL
+    posted={}
+    hash_object = hashlib.sha256((str(datetime.utcnow())+str(randint(0,2000))).encode('utf-8'))
+    txnid=hash_object.hexdigest()[0:20]
+    hashh = ''
+    posted['txnid']=txnid
+    hashSequence = "key|txnid|amount|productinfo|firstname|email|udf1|udf2|udf3|udf4|udf5|udf6|udf7|udf8|udf9|udf10"
+    posted['key']=MERCHANT_KEY
+    posted['amount']=order_total
+    posted['productinfo']='; '.join(['%s:%d'%(i,items_in_cart[i]) for i in items_in_cart])
+    posted['country']='India'
+    posted['surl']='http://jicurations.com/product_section?idd=yoga_mat_bags'
+    posted['furl']='jicurations.com'
+    posted['firstname']=''
+    posted['email']='' if not is_testing else 'email'
+    hash_string=''
+    print(request.args)
+    for i in request.form:
+        posted[i]=request.form[i]
+    hashVarsSeq=hashSequence.split('|')
+    for i in hashVarsSeq:
+        try:
+            hash_string+=str(posted[i])
+        except Exception:
+            hash_string+=''
+        hash_string+='|'
+    hash_string+=SALT
+    hashh=hashlib.sha512(hash_string.encode('utf-8')).hexdigest().lower()
+
+    if request.args.get('id')=='edit':
+        return render_template('checkout1.html',posted=posted,hashh=hashh,hash_string=hash_string,action=action,is_subscribed=is_subscribed,num_items_in_cart=num_items_in_cart,items_in_cart=items_in_cart,products=products,cart_total=cart_total,tax_total=tax_total,shipping_total=shipping_total,order_total=order_total)
+    elif request.args.get('id')=='verify' and posted['firstname']!='' and posted["email"]!='':
+        return render_template('checkout2.html',posted=posted,hashh=hashh,hash_string=hash_string,action=action,is_subscribed=is_subscribed,num_items_in_cart=num_items_in_cart,items_in_cart=items_in_cart,products=products,cart_total=cart_total,tax_total=tax_total,shipping_total=shipping_total,order_total=order_total)
+    elif request.args.get('id')=='verify' and (posted['firstname']=='' or posted["email"]==''):
+        return render_template('checkout1.html',posted=posted,hashh=hashh,hash_string=hash_string,action=action,is_subscribed=is_subscribed,num_items_in_cart=num_items_in_cart,items_in_cart=items_in_cart,products=products,cart_total=cart_total,tax_total=tax_total,shipping_total=shipping_total,order_total=order_total,error=1)
+    else:
+        return render_template('checkout1.html',posted=posted,hashh=hashh,hash_string=hash_string,action=action,is_subscribed=is_subscribed,num_items_in_cart=num_items_in_cart,items_in_cart=items_in_cart,products=products,cart_total=cart_total,tax_total=tax_total,shipping_total=shipping_total,order_total=order_total)
+
 
 @app.route('/product')
 def display_product():

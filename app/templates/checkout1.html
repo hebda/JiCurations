@@ -1,7 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
+<head onload="submitPayuForm()">
+  <script type="text/javascript">
+    var hash = "{{ hashh }}";
+    function submitPayuForm() {
+    if(hash =='') {
+    return;
+    }
+    var payuForm = document.forms.payuForm;
+    payuForm.submit();
+    }
+  </script>
 
     <meta charset="utf-8">
     <meta name="robots" content="all,follow">
@@ -58,31 +68,38 @@
                 <div class="col-md-9" id="checkout">
 
                     <div class="box">
-                        <form method="POST" action="/payment">
+		      <form action={{ action }} method="post" name="payuForm">
+			<input type="hidden" name="key" value="{{ posted.key }}" />
+			<input type="hidden" name="hash_string" value="{{ hash_string }}" />
+			<input type="hidden" name="hash" value="{{ hashh }}"/>
+			<input type="hidden" name="posted" value="{{ posted }}"/>
+			<input type="hidden" name="txnid" value="{{ posted.txnid }}" />
+			<input type="hidden" name="amount" value="{{ posted.amount }}" />
+			<input type="hidden" name="productinfo" value="{{ posted.productinfo }}" />
+			<input type="hidden" name="surl" value="{{ posted.surl }}" />
+			<input type="hidden" name="furl" value="{{ posted.furl }}" />
+
                             <h1>Checkout</h1>
-                            <ul class="nav nav-pills nav-justified">
-                                <li class="active"><a href="#"><i class="fa fa-map-marker"></i><br>Address</a>
-                                </li>
-                                <li class="disabled"><a href="#"><i class="fa fa-truck"></i><br>Delivery Method</a>
-                                </li>
-                                <li class="disabled"><a href="#"><i class="fa fa-money"></i><br>Payment Method</a>
-                                </li>
-                                <li class="disabled"><a href="#"><i class="fa fa-eye"></i><br>Order Review</a>
-                                </li>
-                            </ul>
+
+			    {% if error %}
+
+			    <span style="color:red">Please fill all mandatory fields.</span>
+			    <br/>
+			    <br/>
+			    {% endif %}
 
                             <div class="content">
                                 <div class="row">
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label for="firstname">First name</label>
-                                            <input type="text" class="form-control" name="firstname">
+                                            <input type="text" class="form-control" name="firstname" value="{{ posted.firstname }}">
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label for="lastname">Last name</label>
-                                            <input type="text" class="form-control" name="lastname">
+                                            <input type="text" class="form-control" name="lastname" value="{{ posted.lastname }}">
                                         </div>
                                     </div>
                                 </div>
@@ -92,13 +109,13 @@
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label for="address1">Address 1</label>
-                                            <input type="text" class="form-control" name="address1">
+                                            <input type="text" class="form-control" name="address1" value="{{ posted.address1 }}">
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label for="address2">Address 2</label>
-                                            <input type="text" class="form-control" name="address2">
+                                            <input type="text" class="form-control" name="address2" value="{{ posted.address2 }}">
                                         </div>
                                     </div>
                                 </div>
@@ -108,38 +125,38 @@
                                     <div class="col-sm-6 col-md-3">
                                         <div class="form-group">
                                             <label for="city">City</label>
-                                            <input type="text" class="form-control" name="city">
+                                            <input type="text" class="form-control" name="city" value="{{ posted.city }}">
                                         </div>
                                     </div>
                                     <div class="col-sm-6 col-md-3">
                                         <div class="form-group">
                                             <label for="state">State</label>
-                                            <input type="text" class="form-control" name="state">
+                                            <input type="text" class="form-control" name="state" value="{{ posted.state }}">
                                         </div>
                                     </div>
                                     <div class="col-sm-6 col-md-3">
                                         <div class="form-group">
                                             <label for="zip">ZIP</label>
-                                            <input type="text" class="form-control" name="zip">
+                                            <input type="text" class="form-control" name="zip" value="{{ posted.zip }}">
                                         </div>
                                     </div>
                                     <div class="col-sm-6 col-md-3">
                                         <div class="form-group">
                                             <label for="country">Country</label>
-                                            <input type="text" class="form-control" name="country" value="India" readonly>
+                                            <input type="text" class="form-control" name="country" value="{{ posted.country }}" readonly>
                                         </div>
                                     </div>
 
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label for="phone">Telephone</label>
-                                            <input type="text" class="form-control" name="phone">
+                                            <input type="text" class="form-control" name="phone" value="{{ posted.phone }}">
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label for="email">Email</label>
-                                            <input type="text" class="form-control" name="email">
+                                            <input type="text" class="form-control" name="email" value="{{ posted.email }}">
                                         </div>
                                     </div>
 
@@ -152,7 +169,7 @@
                                     <a href="/basket" class="btn btn-default"><i class="fa fa-chevron-left"></i>Back to basket</a>
                                 </div>
                                 <div class="pull-right">
-                                    <button type="submit" class="btn btn-primary">Continue to Delivery Method<i class="fa fa-chevron-right"></i>
+                                    <a href="/checkout?id=verify" class="btn btn-default"><i class="fa fa-chevron-right"></i>Verify</a>
                                     </button>
                                 </div>
                             </div>
