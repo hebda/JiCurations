@@ -12,7 +12,6 @@ from datetime import datetime
 from sys import version_info
 import hashlib
 from random import randint
-from django.template import RequestContext
 
 # for determining if email input box is needed
 is_subscribed=0
