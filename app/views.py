@@ -1,4 +1,4 @@
-from flask import render_template, request
+from flask import render_template, request, session
 from app import app
 import pymysql as mdb
 import matplotlib as mpl
@@ -22,6 +22,19 @@ items_in_cart={}
 cart_total=0
 order_total=0
 
+# secret key
+with open('app/data/key_and_salt.txt') as filehandle:
+    for line_num,line in enumerate(filehandle):
+        if line_num==0:
+            continue
+        elif line_num==1:
+            tmp_salt=line.replace('\n','')
+        if line_num>=2:
+            break
+app.secret_key=os.urandom(int(hashlib.sha256((tmp_salt+str(datetime.utcnow())).encode('utf-8')).hexdigest()[:2],16))
+app.secret_key='hi how'
+app.config['SECRET_KEY']='hi how'
+
 # consider using a utils file
 class product:
     def __init__(self,code,title,desc,features,price,imagecode):
@@ -42,6 +55,7 @@ with open('app/data/section_header.csv') as filehandle:
         product_sections[line.split(',')[0]]={'banner':line.split(',')[1],
                                               'desc':','.join(line.split(',')[2:]).replace('"',''),
                                               'codes':[] }
+
 for product_section_i in product_sections:
     with open('app/data/%s.csv'%product_section_i) as filehandle:
         all_lines=''.join(filehandle.readlines())+'\n'
@@ -70,22 +84,34 @@ def calc_tax(subtotal=0):
 def calc_shipping(subtotal=0):
     return 50 if subtotal>0 and subtotal<1000 else 0
 
+def get_session_object(object_,default_val):
+    if object_ in session:
+        return session[object_]
+    else:
+        return default_val
+
 @app.route('/')
 @app.route('/index')
 @app.route('/input')
 def home():
+    num_items_in_cart=get_session_object('num_items_in_cart',0)
+    is_subscribed=get_session_object('is_subscribed',0)
     return render_template("index.html",is_subscribed=is_subscribed,num_items_in_cart=num_items_in_cart)
 
 @app.route('/coming_soon')
 def coming_soon():
+    num_items_in_cart=get_session_object('num_items_in_cart',0)
+    is_subscribed=get_session_object('is_subscribed',0)
     return render_template('coming_soon.html',is_subscribed=is_subscribed,num_items_in_cart=num_items_in_cart)
 
 @app.route('/update_basket')
 def update_basket():
-    global num_items_in_cart
-    global items_in_cart
-    global cart_total
-    global order_total
+    num_items_in_cart=get_session_object('num_items_in_cart',0)
+    items_in_cart=get_session_object('items_in_cart',{})
+    cart_total=get_session_object('cart_total',0)
+    order_total=get_session_object('order_total',0)
+    is_subscribed=get_session_object('is_subscribed',0)
+
     input_code=request.args.get('id_zero')
     if input_code!=None:
         if input_code in items_in_cart:
@@ -102,14 +128,20 @@ def update_basket():
         
     num_items_in_cart=sum(items_in_cart.values())
     cart_total=sum([items_in_cart[i]*products[i].price for i in items_in_cart])
+    session['num_items_in_cart']=num_items_in_cart
+    session['items_in_cart']=items_in_cart
+    session['cart_total']=cart_total
+
     return basket()
 
 @app.route('/basket')
 def basket():
-    global num_items_in_cart
-    global items_in_cart
-    global cart_total
-    global order_total
+    num_items_in_cart=get_session_object('num_items_in_cart',0)
+    items_in_cart=get_session_object('items_in_cart',{})
+    cart_total=get_session_object('cart_total',0)
+    order_total=get_session_object('order_total',0)
+    is_subscribed=get_session_object('is_subscribed',0)
+
     input_code=request.args.get('idd')
     if input_code!=None:
         if input_code in items_in_cart:
@@ -121,18 +153,25 @@ def basket():
     tax_total=calc_tax(cart_total)
     shipping_total=calc_shipping(cart_total)
     order_total=cart_total+tax_total+shipping_total
+
+    session['num_items_in_cart']=num_items_in_cart
+    session['items_in_cart']=items_in_cart
+    session['cart_total']=cart_total
+    session['order_total']=order_total
+
     return render_template('basket.html',is_subscribed=is_subscribed,num_items_in_cart=num_items_in_cart,items_in_cart=items_in_cart,products=products,cart_total=cart_total,tax_total=tax_total,shipping_total=shipping_total,order_total=order_total)
 
 @app.route('/checkout', methods=['GET', 'POST'])
 def checkout():
     is_testing=1
-    global num_items_in_cart
-    global items_in_cart
-    global cart_total
-    global order_total
+    num_items_in_cart=get_session_object('num_items_in_cart',0)
+    items_in_cart=get_session_object('items_in_cart',{})
+    cart_total=get_session_object('cart_total',0)
+    order_total=get_session_object('order_total',0)
+    is_subscribed=get_session_object('is_subscribed',0)
+
     tax_total=calc_tax(cart_total)
     shipping_total=calc_shipping(cart_total)
-    order_total=cart_total+tax_total+shipping_total
 
     MERCHANT_KEY = ""
     SALT = ""
@@ -187,6 +226,9 @@ def checkout():
 
 @app.route('/product')
 def display_product():
+    num_items_in_cart=get_session_object('num_items_in_cart',0)
+    is_subscribed=get_session_object('is_subscribed',0)
+
     input_code=request.args.get('idd')
     product_i=products[input_code]
     num_img=len(fnmatch.filter(os.listdir("app/static/img"), '%s*'%input_code))
@@ -194,6 +236,9 @@ def display_product():
 
 @app.route('/product_section')
 def display_product_section():
+    num_items_in_cart=get_session_object('num_items_in_cart',0)
+    is_subscribed=get_session_object('is_subscribed',0)
+
     input_code=request.args.get('idd')
     product_list=[]
     for code_i in product_sections[input_code]['codes']:
@@ -205,6 +250,9 @@ def display_product_section():
 
 @app.route('/subscribe')
 def subscribe():
+    num_items_in_cart=get_session_object('num_items_in_cart',0)
+    is_subscribed=get_session_object('is_subscribed',0)
+
     email_input=request.args.get('email_input')
     dateint=int(datetime.utcnow().strftime('%Y%m%d'))
     if '@' in email_input and '.' in email_input:
@@ -213,6 +261,8 @@ def subscribe():
         with db:
             cur = db.cursor()
             cur.execute("INSERT INTO subscription (email, subscription_date) values (\"%s\",%d);" % (email_input,dateint) )
+
+    session['is_subscribed']=is_subscribed
 
     return render_template('index.html',is_subscribed=is_subscribed,num_items_in_cart=num_items_in_cart)
 
