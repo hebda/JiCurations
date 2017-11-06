@@ -37,13 +37,14 @@ app.config['SECRET_KEY']='hi how'
 
 # consider using a utils file
 class product:
-    def __init__(self,code,title,desc,features,price,imagecode):
+    def __init__(self,code,title,desc,features,price,imagecode,section):
         self.code=code
         self.title=title
         self.desc=desc
         self.features=features
         self.price=price
         self.imagecode=imagecode
+        self.section=section
 
 # process products one time
 product_sections={}
@@ -70,7 +71,7 @@ for product_section_i in product_sections:
                 features=features.decode('utf-8')
             price=int(line.split(',')[-2])
             imagecode=line.split(',')[-1].replace('\n','')
-            products[code]=product(code,title,desc,features,price,imagecode)
+            products[code]=product(code,title,desc,features,price,imagecode,product_section_i)
             product_sections[product_section_i]['codes'].append(code)
 
 font = {'family' : 'sans-serif', 'weight' : 'bold', 'size'   : 22}
@@ -231,7 +232,7 @@ def display_product():
 
     input_code=request.args.get('idd')
     product_i=products[input_code]
-    num_img=len(fnmatch.filter(os.listdir("app/static/img"), '%s*'%input_code))
+    num_img=len(fnmatch.filter(os.listdir("app/static/img/"+product_i.section), '%s*'%input_code))
     return render_template('product.html',is_subscribed=is_subscribed,num_items_in_cart=num_items_in_cart,product_i=product_i,num_img=num_img)
 
 @app.route('/product_section')
@@ -244,8 +245,8 @@ def display_product_section():
     for code_i in product_sections[input_code]['codes']:
         product_list.append(products[code_i])
     payload_dict={'products':product_list,'banner':'img.jpg','desc':'description'}
-    payload_dict['banner']=product_sections['yoga_mat_bags']['banner']
-    payload_dict['desc']=product_sections['yoga_mat_bags']['desc']
+    payload_dict['banner']=product_sections[input_code]['banner']
+    payload_dict['desc']=product_sections[input_code]['desc']
     return render_template('product_section.html',is_subscribed=is_subscribed,num_items_in_cart=num_items_in_cart,payload=payload_dict)
 
 @app.route('/subscribe')
