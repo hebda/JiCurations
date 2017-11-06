@@ -56,6 +56,7 @@
 
         <div id="content">
 
+	  <!-- remove banner for now
             <div class="container">
                 <div class="col-md-14">
                     <div id="main-slider">
@@ -63,9 +64,10 @@
                             <img src="static/img/{{payload['banner']}}" alt="" class="img-responsive" style="height: 100%; width: 100%; object-fit: contain">
                         </div>
                     </div>
-                    <!-- /#main-slider -->
                 </div>
             </div>
+	    -->
+
 
             <!-- *** HOT PRODUCT SLIDESHOW ***
  _________________________________________________________ -->
@@ -87,7 +89,7 @@
                         <div class="col-sm-4">
                             <div class="product">
                                             <a href={{"/product?idd="+product_i.code}}>
-                                                <img src={{"static/img/"+product_i.code+"_main.jpg"}} alt="" class="img-responsive" style="height: 100%; width: 100%; object-fit: contain">
+                                                <img src={{"static/img/"+product_i.section+"/"+product_i.code+"_main.jpg"}} alt="" class="img-responsive" style="height: 100%; width: 100%; object-fit: contain">
                                             </a>
                                 <div class="text">
                                     <h3><a href={{"/product?idd="+product_i.code}}>{{product_i.title}}
