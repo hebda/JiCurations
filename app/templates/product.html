@@ -67,9 +67,9 @@
                       <div class="item">
                         <a href="#about">
 			  {% if img_i==0: %}
-                          <img src={{"static/img/"+product_i.code+"_main.jpg"}} alt="Get inspired" class="img-responsive" style="height: 100%; width: 100%; object-fit: contain">
+                          <img src={{"static/img/"+product_i.section+"/"+product_i.code+"_main.jpg"}} alt="Get inspired" class="img-responsive" style="height: 100%; width: 100%; object-fit: contain">
 			  {% else: %}
-                          <img src={{"static/img/"+product_i.code+"_"~img_i~".jpg"}} alt="Get inspired" class="img-responsive" style="height: 100%; width: 100%; object-fit: contain">
+                          <img src={{"static/img/"+product_i.section+"/"+product_i.code+"_"~img_i~".jpg"}} alt="Get inspired" class="img-responsive" style="height: 100%; width: 100%; object-fit: contain">
 			  {% endif %}
                         </a>
                       </div>
